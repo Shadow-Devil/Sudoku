@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-
-=======
 import java.util.concurrent.*;
->>>>>>> 91db6abd1c31569a825e544a4b7500a8afbdc39d
 class Test
 {
     public Feld [][] spielfeld;
