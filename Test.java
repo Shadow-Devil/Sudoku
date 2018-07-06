@@ -1,6 +1,5 @@
 import java.util.concurrent.*;
 
-
 class Test //haha noob
 
 {
