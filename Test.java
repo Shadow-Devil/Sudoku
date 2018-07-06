@@ -1,4 +1,4 @@
-import java.util.concurrent.*;
+import java.util.concurrent.ThreadLocalRandom;
 class Test
 {
     public Feld [][] spielfeld;
