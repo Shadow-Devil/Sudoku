@@ -1,5 +1,8 @@
 import java.util.concurrent.*;
-class Test //dswa
+
+
+class Test //haha noob
+
 {
     public Feld [][] spielfeld;
     int tmptry = 0;
