@@ -127,7 +127,6 @@ class Model
             }
             //erstelleSpielzahlen();
             //return;
-            //opcfawseojfcsedfsxvc
             return false;
         }
 
