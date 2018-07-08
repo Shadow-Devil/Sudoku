@@ -1,4 +1,5 @@
 import java.awt.event.*;
+  
 
 class Controller implements MouseListener
 {
@@ -8,8 +9,6 @@ class Controller implements MouseListener
     Controller() {
         view = new View(this);
         model = new Model (view);
-        
-        
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -50,7 +49,7 @@ class Controller implements MouseListener
                         for(int xt=0; xt<9; xt++)
                         {
                             if(model.spielfeld[xt][yt].getAusgewaehlt() == true) {
-                                System.out.println(inhaltTMP + "\n"+ model.spielfeld[xt][yt]);
+                                //System.out.println(inhaltTMP + "\n"+ model.spielfeld[xt][yt]);
                                 model.aendereInhaltGraphisch(xt,yt,inhaltTMP);
                             }
                         }
@@ -72,4 +71,10 @@ class Controller implements MouseListener
 
     public void mouseClicked(MouseEvent e) {
 
-    }}
+    }
+
+    public void startSudoku()
+    {
+        model.start();
+    }
+}

@@ -3,16 +3,18 @@ class Model
 {
     public Feld [][] spielfeld; //Sudokufeld
     //int tmptry = 0; //Debugzahl für Prüfen des Spielfelds
-    View view;
+    private View view;
+    public SQL sql;
     Model (View view)
     {        
         this.view = view;
         spielfeld = new Feld [9][9]; //Erstelle ein leeres Sudokufeld
-        start();
+        sql = new SQL(this);
+        view.erstelleSpielfeld();
     }
 
 
-    private void start() //Debugging
+    public void start() //Anfang von von dem erstellen eines Sudokus    
     {
         //int tmptry = 0;
         erstelleSpielfeld();
@@ -66,6 +68,7 @@ class Model
         }
         //ausgebenkonstant();
         //ausgeben(8,8);
+        sql.insert();
     }
 
 
@@ -79,7 +82,7 @@ class Model
                 spielfeld[x][y] = new Feld(x,y,0);
             }
         }
-        view.erstelleSpielfeld();
+        
     }
     
     private boolean /*void*/ erstelleSpielzahlen() //Zufälliges Füllen mit Abfrage nach Regelverstoß
@@ -245,12 +248,12 @@ class Model
             }
             //System.out.println("nicht eindeutig " +i);
         }
-        System.out.println("x und y " +x +"  "+y);
+        //System.out.println("x und y " +x +"  "+y);
         aendereInhaltObjekt(x,y,tmp);
 
         if(i<15 || i > 35)
         {
-            System.out.println(i);
+            //System.out.println(i);
             return false;
         }
         else

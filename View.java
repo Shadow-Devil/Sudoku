@@ -44,6 +44,7 @@ public class View extends JFrame
         setVisible(true);
         
     }
+    
     public void erstelleSpielfeld() {
         for(int y=0;y<9;y++) {
             for(int x=0;x<9;x++) {
@@ -63,7 +64,7 @@ public class View extends JFrame
         zahlenfeld();
         zahlenfeldSichtbar(false);
         startTime = System.nanoTime();
-        }
+    }
 
     public void zahlenfeld() {
         int inhaltTMP;
