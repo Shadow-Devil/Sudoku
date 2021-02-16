@@ -26,8 +26,8 @@ public class Model {
 		
 	}
 	
-	public int load(String s)//Spiel laden
-	{
+	//Spiel laden
+	public void load(String s){
 		int i = 0;
 		for (int y = 0; y < 9; y++) {
 			for (int x = 0; x < 9; x++) {
@@ -36,7 +36,6 @@ public class Model {
 				
 			}
 		}
-		return i;
 	}
 	
 	
@@ -46,7 +45,7 @@ public class Model {
 	
 	
 	public boolean isEmpty() {
-		return andBoard(gameBoard, field -> field.getInhalt() == 0);
+		return andBoard(gameBoard, field -> field.getInhalt() == 0 || field.isConstant());
 	}
 	
 	
@@ -90,16 +89,16 @@ public class Model {
 	}
 	
 	public void reset() {
-		for (int y = 0; y < 9; y++) {
-			for (int x = 0; x < 9; x++) {
-				if (!gameBoard[x][y].isConstant()) {
-					gameBoard[x][y].setInhalt(0);
-				}
-			}
-		}
+		for (Field[] column : gameBoard)
+			for (Field field : column)
+				field.reset();
 	}
 	
 	public void setField(int x, int y, int zahl) {
 		gameBoard[x][y].setInhalt(zahl);
+	}
+	
+	public int getField(int x, int y){
+		return gameBoard[x][y].getInhalt();
 	}
 }
