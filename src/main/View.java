@@ -8,84 +8,83 @@ import java.awt.*;
 import static java.awt.Color.*;
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 import static main.Model.Util.EMPTY;
+import static main.State.*;
 
-public class View{
-	public static final String TITLE = "Sudoku";
-	private final JFrame frame;
-
-    public final JPanel gamePanel = new JPanel();
-	public final JLabel[][] sudokuFields = new JLabel[9][9];
+public class View {
+	public static final  String TITLE     = "Sudoku";
+	private static final Color  DARK_GREY = new Color(60, 60, 60);
 	
-	private String username = "Lieber User";
+	private final JFrame frame = new JFrame(TITLE);
 	
-    private final JPanel menuPanel = new JPanel();
-	public final JButton[] buttons = new JButton[5];
- 
-	private final JPanel endPanel = new JPanel();
-	private final JLabel winnerText = new JLabel();
-	private final JLabel timeLabel = new JLabel();
-	public final TextField textField = new TextField(30);
+	private final JPanel     gamePanel    = new JPanel();
+	public final  JLabel[][] sudokuFields = new JLabel[9][9];
 	
-	private final JPanel extraPanel = new JPanel();
-	private final JPanel chooseNumberPanel = new JPanel();
-	public final JLabel[][] chooseNumberFields = new JLabel[3][3];
-	private final JLabel helpLabel = new JLabel();
+	private final JPanel    menuPanel = new JPanel();
+	private final JButton[] buttons   = new JButton[5];
 	
-	private final JPanel highscorePanel = new JPanel();
-	private final JLabel[] highscores = new JLabel[10];
+	private final JPanel    endPanel   = new JPanel();
+	private final JLabel    winnerText = new JLabel();
+	private final JLabel    timeLabel  = new JLabel();
+	private final TextField textField  = new TextField(30);
+	
+	private final JPanel     chooseNumberPanel  = new JPanel();
+	public final  JLabel[][] chooseNumberFields = new JLabel[3][3];
+	private final JLabel     helpLabel          = new JLabel();
+	
+	private final JPanel   highscorePanel = new JPanel();
+	private final JLabel[] highscores     = new JLabel[10];
 	
 	private final JPanel rulePanel = new JPanel();
-    
-    private boolean help;
-    private static final Color DARK_GREY = new Color(60, 60, 60);
- 
+	
+	private String  username = "Lieber User";
+	private State   state;
+	private boolean help;
+	
+	
 	public View(Controller controller) {
-		frame = new JFrame(TITLE);
 		frame.setSize(820, 535);
 		frame.setLayout(null);
 		frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
-		ViewBuilder.createStartMenu(frame, controller, menuPanel, buttons);
-		
-		ViewBuilder.createEndMenu(frame, controller, endPanel, winnerText, timeLabel, textField);
-		
-		ViewBuilder.createHighScoreMenu(frame, controller, highscorePanel, highscores);
-
-		ViewBuilder.createGameScreen(frame, controller, gamePanel, sudokuFields);
-		
-		ViewBuilder.createExtraPanel(frame, controller, extraPanel, chooseNumberPanel, chooseNumberFields, helpLabel);
-		
-		ViewBuilder.createRuleScreen(frame, controller, rulePanel);
+		ViewBuilder vb = new ViewBuilder(this, controller, frame);
+		vb.createStartMenu(menuPanel, buttons);
+		vb.createEndMenu(endPanel, winnerText, timeLabel, textField);
+		vb.createHighScoreMenu(highscorePanel, highscores);
+		vb.createGameScreen(gamePanel, sudokuFields);
+		vb.createExtraPanel(new JPanel(), chooseNumberPanel, chooseNumberFields, helpLabel);
+		vb.createRuleScreen(rulePanel);
 		
 		frame.setVisible(true);
+		showStartScreen();
 	}
 	
-	public void setKonstant(Field[][] board) {
-		for (int y = 0; y < 9; y++) {
-			for (int x = 0; x < 9; x++) {
-				if (board[x][y].getInhalt() == 0) {
-					sudokuFields[x][y].setBackground(WHITE);
-					sudokuFields[x][y].setForeground(BLACK);
-				} else {
-					sudokuFields[x][y].setBackground(DARK_GREY);
+	public void start(Field[][] board) {
+		for (int x = 0; x < 9; x++) {
+			for (int y = 0; y < 9; y++) {
+				aendereInhalt(x, y, board[x][y].getInhalt());
+				if (board[x][y].isConstant()) {
 					sudokuFields[x][y].setForeground(WHITE);
+					sudokuFields[x][y].setBackground(DARK_GREY);
+				} else {
+					sudokuFields[x][y].setForeground(BLACK);
+					sudokuFields[x][y].setBackground(WHITE);
 				}
 			}
 		}
+		changeState(gamePanel, GAME);
 	}
 	
 	public void showChooseNumberPanel(boolean show) {
-        chooseNumberPanel.setVisible(show);
+		chooseNumberPanel.setVisible(show);
 		frame.repaint();
 	}
 	
 	public void aendereInhalt(int x, int y, int i) {
 		sudokuFields[x][y].setText(i == EMPTY ? "" : "" + i);
-		showChooseNumberPanel(false);
-    }
+	}
 	
 	public void toggleHelp() {
-        help = !help;
+		help = !help;
 	}
 	
 	public void highlighteZahlen(int x, int y, boolean b) {
@@ -113,23 +112,27 @@ public class View{
 		frame.repaint();
 	}
 	
-
 	
 	public void writeHelpLabel(String text) { //Anweisungstext ändern
-		helpLabel.setText("<html>" + username + " " + text + "</html>");
+		text = String.format("<html>%s<br><p>%s</p></html>", username, text);
+		helpLabel.setText(text);
 		frame.repaint();
 	}
 	
-
 	
 	public void showStartScreen() {
+		writeHelpLabel("Herzlich willkommen zu Sudoku!<br>" +
+				"Starte ein neues Spiel, lade einen Spielstand,<br>" +
+				"schau dir die Highscores an<br>" +
+				"oder ließ erstmal die Regeln durch");
+		
 		buttons[0].setText("Neues Spiel");
 		buttons[1].setText("Spiel laden");
 		buttons[2].setText("Regeln");
 		buttons[3].setText("Highscores");
 		buttons[4].setText("Beenden");
 		
-		showPanel(menuPanel);
+		changeState(menuPanel, START);
 	}
 	
 	public void showPauseScreen() {
@@ -137,51 +140,43 @@ public class View{
 		buttons[1].setText("Speichern");
 		buttons[2].setText("Regeln");
 		buttons[3].setText("Neustart");
-		buttons[4].setText("Schließen");
+		buttons[4].setText("Zurück zum Hauptmenü");
 		
-		showPanel(menuPanel);
+		changeState(menuPanel, PAUSE);
 	}
 	
-
-	
-	public void showEndScreen(boolean show, int z) {
-		//"<html>" + username + ": Herzlichen Glückwunsch! <p> Sie haben gewonnen!</p></html>",
-		//"Benötigte Zeit: " + timeLabel
-		System.out.println("test");
-		if (show) {
-			timeLabel.setText(String.valueOf(z));
-			writeHelpLabel("<p>das Spiel ist zuende</p>");
-		}
-		showPanel(endPanel);
+	public void showEndScreen(long time) {
+		winnerText.setText("<html><p>" + username + ": Herzlichen Glückwunsch! <br>" +
+				"Sie haben gewonnen! <br> " +
+				"</html>");//Gebe deinen Namen unten ein um dich in die Highscore Liste einzutragen</p>
+		timeLabel.setText("Benötigte Zeit: " + time);
+		
+		textField.setText("");
+		writeHelpLabel("Das Spiel ist zuende");
+		
+		changeState(endPanel, END);
 	}
 	
-	public String getSpielername() {
+	public String getUsername() {
 		return textField.getText();
 	}
 	
-	public void showHighscoreScreen() {
-		showPanel(highscorePanel);
-	}
-	
-	public void highscoreEinfuegen(String nameMitZeit) {
-		for (int i = 0; i < 10; i++) {
-			if (highscores[i].getText().equals((i + 1) + ". ---") && nameMitZeit != null) {
-				highscores[i].setText((i + 1) + ". " + nameMitZeit);
-				break;
-			}
-		}
-	}
-	
-	public void highscoreReset() {
-		for (int i = 1; i < 11; i++) {
-			highscores[i - 1].setText(i + ". ---");
-		}
+	public void showHighscoreScreen(String[] strings) {
+		for (int i = 0; i < highscores.length && i < strings.length; i++)
+			highscores[i].setText(String.format("%d. %s", i + 1, strings[i] == null ? "---" : strings[i]));
+		changeState(highscorePanel, HIGHSCORE);
 	}
 	
 
 	
+	public void highscoreReset() {
+		for (int i = 0; i < 10; i++)
+			highscores[i].setText(String.format("%d. ---", i + 1));
+		showStartScreen();
+	}
+	
 	public void showRuleScreen() {
-		showPanel(rulePanel);
+		changeState(rulePanel, RULE);
 	}
 	
 	public void showSelectDifficultyScreen() {
@@ -191,15 +186,11 @@ public class View{
 		buttons[3].setText("Extreme");
 		buttons[4].setText("Zurück");
 		
-		showPanel(menuPanel);
+		changeState(menuPanel, SELECTDIFF);
 	}
 	
-	public void showGameScreen(){
-		showPanel(gamePanel);
-	}
-	
-	public void setUsername(String username) {
-		this.username = username;
+	public void showGameScreen() {
+		changeState(gamePanel, GAME);
 	}
 	
 	public void reset(Field[][] board) {
@@ -210,15 +201,21 @@ public class View{
 		frame.repaint();
 	}
 	
-	private void showPanel(JPanel panel){
+	private void changeState(JPanel panel, State state) {
 		gamePanel.setVisible(false);
 		menuPanel.setVisible(false);
 		endPanel.setVisible(false);
 		rulePanel.setVisible(false);
 		highscorePanel.setVisible(false);
+		chooseNumberPanel.setVisible(false);
 		
+		this.state = state;
 		panel.setVisible(true);
 		frame.repaint();
+	}
+	
+	public State getState() {
+		return state;
 	}
 }
 
