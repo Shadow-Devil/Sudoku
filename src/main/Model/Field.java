@@ -22,6 +22,10 @@ public class Field {
 		inhalt = zahl;
 	}
 	
+	public void reset(){
+		inhalt = 0;
+	}
+	
 	public boolean isConstant() {
 		return false;
 	}

@@ -16,4 +16,8 @@ public class FinalField extends Field {
 	public boolean isConstant() {
 		return true;
 	}
+	
+	@Override
+	public void reset() {
+	}
 }
