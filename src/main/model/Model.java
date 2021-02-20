@@ -1,8 +1,6 @@
-package main.Model;
+package main.model;
 
-import java.util.function.Predicate;
-
-import static main.Model.Util.*;
+import static main.model.Util.*;
 
 public class Model {
 	private Field[][] gameBoard = new Field[9][9]; //Sudokufeld
@@ -43,27 +41,26 @@ public class Model {
 		return Util.isFinished(gameBoard);
 	}
 	
+	public boolean isFull(){
+		return Util.isFull(gameBoard);
+	}
+	
 	
 	public boolean isEmpty() {
-		return andBoard(gameBoard, field -> field.getInhalt() == 0 || field.isConstant());
+		return andBoard(gameBoard, field -> field.getContent() == 0 || field.isConstant());
 	}
+	
+	
 	
 	
 	public boolean pruefeSpielzahl(int x, int y) {
 		return Util.pruefeSpielzahl(gameBoard, x, y);
 	}
 	
-	public boolean getFeldSelected(int x, int y) {
-		return gameBoard[x][y].getSelected();
+	public boolean isFieldConstant(int x, int y) {
+		return gameBoard[x][y].isConstant();
 	}
 	
-	public boolean isFieldNotConstant(int x, int y) {
-		return !gameBoard[x][y].isConstant();
-	}
-	
-	public void setFeldSelected(int x, int y, boolean a) {
-		gameBoard[x][y].setSelected(a);
-	}
 
 	
 	private void consumeBoard(TriConsumer<Integer, Integer, Field> c) {
@@ -98,7 +95,7 @@ public class Model {
 		gameBoard[x][y].setInhalt(zahl);
 	}
 	
-	public int getField(int x, int y){
-		return gameBoard[x][y].getInhalt();
+	public int getFieldContent(int x, int y){
+		return gameBoard[x][y].getContent();
 	}
 }

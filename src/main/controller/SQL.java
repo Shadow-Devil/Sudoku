@@ -1,6 +1,4 @@
-package main;
-
-import main.Model.Field;
+package main.controller;
 
 import java.sql.*;
 

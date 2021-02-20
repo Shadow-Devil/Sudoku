@@ -1,4 +1,4 @@
-package main.Model;
+package main.model;
 
 public enum Difficulty {
 	EASY(45, 51),

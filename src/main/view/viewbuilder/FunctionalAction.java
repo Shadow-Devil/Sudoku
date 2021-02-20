@@ -1,4 +1,4 @@
-package main;
+package main.view.viewbuilder;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -6,7 +6,7 @@ import java.awt.event.ActionListener;
 
 public class FunctionalAction extends AbstractAction {
 
-    private ActionListener myaction;
+    private final ActionListener myaction;
 
     public FunctionalAction(ActionListener customaction) {
         this.myaction = customaction;
@@ -16,13 +16,4 @@ public class FunctionalAction extends AbstractAction {
     public void actionPerformed(ActionEvent e) {
         myaction.actionPerformed(e);
     }
-
-    public ActionListener getMyaction() {
-        return myaction;
-    }
-
-    public void setMyaction(ActionListener myaction) {
-        this.myaction = myaction;
-    }
-
 }

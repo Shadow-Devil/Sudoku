@@ -1,20 +1,17 @@
-package main.Model;
+package main.model;
 
 public class Field {
 	protected int inhalt;
-	protected boolean selected;
 	
 	Field() {
 		inhalt = 0;
-		selected = false;
 	}
 	
 	Field(int zahl) {
 		inhalt = zahl;
-		selected = false;
 	}
 	
-	public int getInhalt() {
+	public int getContent() {
 		return inhalt;
 	}
 	
@@ -28,14 +25,5 @@ public class Field {
 	
 	public boolean isConstant() {
 		return false;
-	}
-	
-	
-	public boolean getSelected() {
-		return selected;
-	}
-	
-	public void setSelected(boolean a) {
-		selected = a;
 	}
 }

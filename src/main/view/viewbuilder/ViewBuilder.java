@@ -1,4 +1,7 @@
-package main;
+package main.view.viewbuilder;
+
+import main.controller.Controller;
+import main.view.View;
 
 import javax.swing.*;
 import java.awt.*;
@@ -6,17 +9,18 @@ import java.awt.event.KeyEvent;
 
 import static java.awt.Color.*;
 import static java.awt.Color.WHITE;
-import static main.Model.Difficulty.*;
+import static main.model.Difficulty.*;
 
 public class ViewBuilder {
+	public static final Color FCOLOR = WHITE;
+	public static final Color BCOLOR = BLUE;
+	private static final Color BORDER_COLOR  = new Color(57, 77, 0);
 	
-//	private static final Color gameBorder =
-	
-	private final View view;
+	private final View       view;
 	private final Controller controller;
-	private final JFrame frame;
+	private final JFrame     frame;
 	
-	ViewBuilder(View view, Controller controller, JFrame frame){
+	public ViewBuilder(View view, Controller controller, JFrame frame){
 		this.view = view;
 		this.controller = controller;
 		this.frame = frame;
@@ -25,10 +29,11 @@ public class ViewBuilder {
 	/**
 	 * Inizialises the 5 Buttons
 	 */
-	public void createStartMenu(Container menuPanel, JButton[] buttons) {
+	public void createStartMenu(Container menuPanel, MyButton[] buttons) {
 		menuPanel.setLayout(new GridLayout(5, 1));
 		menuPanel.setBounds(0, 0, 500, 500);
-		buttons[0] = new JButton();
+		
+		buttons[0] = new MyButton();
 		buttons[0].addActionListener(e -> {
 			switch (view.getState()){
 				case START -> view.showSelectDifficultyScreen();
@@ -40,7 +45,7 @@ public class ViewBuilder {
 			}
 		});
 		
-		buttons[1] = new JButton();
+		buttons[1] = new MyButton();
 		buttons[1].addActionListener(e -> {
 			switch (view.getState()){
 				case START -> controller.load();
@@ -49,7 +54,7 @@ public class ViewBuilder {
 			}
 		});
 		
-		buttons[2] = new JButton();
+		buttons[2] = new MyButton();
 		buttons[2].addActionListener(e -> {
 			switch (view.getState()){
 				case START, PAUSE -> view.showRuleScreen();
@@ -57,7 +62,7 @@ public class ViewBuilder {
 			}
 		});
 		
-		buttons[3] = new JButton();
+		buttons[3] = new MyButton();
 		buttons[3].addActionListener(e -> {
 			switch (view.getState()){
 				case START -> controller.highscore();
@@ -66,7 +71,7 @@ public class ViewBuilder {
 			}
 		});
 		
-		buttons[4] = new JButton();
+		buttons[4] = new MyButton();
 		buttons[4].addActionListener(e -> {
 			switch (view.getState()){
 				case START -> System.exit(0);
@@ -74,47 +79,28 @@ public class ViewBuilder {
 			}
 		});
 		
-		for (JButton button : buttons) {
-			button.setFont(new Font("Arial", Font.PLAIN, 40));
-			button.setForeground(WHITE);
-			button.setBackground(BLUE);
+		for (JButton button : buttons)
 			menuPanel.add(button);
-		}
+		
 		frame.add(menuPanel);
 	}
 	
-	public void createEndMenu(JPanel endPanel, JLabel winnerText, JLabel timeLabel, TextField textField) {
+	public void createEndMenu(JPanel endPanel, MyLabel winnerText, MyLabel timeLabel, TextField textField) {
 		endPanel.setLayout(new GridLayout(5, 1));
 		endPanel.setBounds(0, 0, 500, 500);
-		
-		winnerText.setHorizontalAlignment(SwingConstants.CENTER);
-		winnerText.setFont(new Font("Arial", Font.PLAIN, 25));
-		winnerText.setForeground(WHITE);
-		winnerText.setBackground(BLUE);
-		winnerText.setOpaque(true);
+
 		endPanel.add(winnerText);
-		
-		timeLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		timeLabel.setFont(new Font("Arial", Font.PLAIN, 25));
-		timeLabel.setForeground(WHITE);
-		timeLabel.setBackground(BLUE);
-		timeLabel.setOpaque(true);
+
 		endPanel.add(timeLabel);
 		
-		JButton addHighscore = new JButton("Highscore eintragen");
-		addHighscore.setFont(new Font("Arial", Font.PLAIN, 25));
-		addHighscore.setForeground(WHITE);
-		addHighscore.setBackground(BLUE);
+		JButton addHighscore = new MyButton("Highscore eintragen", 25);
 		addHighscore.addActionListener(e -> controller.highscoreinsert());
 		endPanel.add(addHighscore);
 		
 		textField.setFont(new Font("Arial", Font.ITALIC, 40));
 		endPanel.add(textField);
 		
-		JButton zurueck = new JButton("Zurück zum Hauptmenü");
-		zurueck.setFont(new Font("Arial", Font.PLAIN, 25));
-		zurueck.setForeground(WHITE);
-		zurueck.setBackground(BLUE);
+		JButton zurueck = new MyButton("Zurück zum Hauptmenü", 25);
 		zurueck.addActionListener(e -> view.showStartScreen());
 		endPanel.add(zurueck);
 		
@@ -124,23 +110,18 @@ public class ViewBuilder {
 	/**
 	 *
 	 */
-	public void createHighScoreMenu(JPanel highscorePanel, JLabel[] highscores) {
+	public void createHighScoreMenu(JPanel highscorePanel, MyLabel[] highscores) {
 		highscorePanel.setBounds(0, 0, 500, 500);
 		highscorePanel.setLayout(new GridLayout(11, 1));
-		highscorePanel.setBackground(Color.BLUE);
+		highscorePanel.setBackground(BLUE);
 		
-		for (int i = 0; i < 10; i++) {
-			highscores[i] = new JLabel((i+1) + ". ---", SwingConstants.CENTER);
-			highscores[i].setFont(new Font("Arial", Font.ITALIC, 20));
-			highscores[i].setForeground(WHITE);
+		for (int i = 0; i < highscores.length; i++) {
+			highscores[i] = new MyLabel(20);
 			highscorePanel.add(highscores[i]);
 		}
 		
-		JButton zurueck = new JButton("Zurück");
-		zurueck.setBackground(BLUE);
-		zurueck.setForeground(WHITE);
-		zurueck.setFont(new Font("Arial", Font.PLAIN, 40));
-		zurueck.addActionListener(e -> view.highscoreReset());
+		MyButton zurueck = new MyButton("Zurück");
+		zurueck.addActionListener(e -> view.showStartScreen());
 		highscorePanel.add(zurueck);
 		
 		frame.add(highscorePanel);
@@ -151,25 +132,23 @@ public class ViewBuilder {
 		rulePanel.setLayout(null);
 		rulePanel.setBounds(0, 0, 500, 500);
 		
-        JLabel regeln = new JLabel("<html><p>Sudoku besteht aus 9 großen Feldern, die wiederaum aus 3x3 Feldern besteht.<br>" +
+		MyLabel regeln = new MyLabel("<html><p>Sudoku besteht aus 9 großen Feldern, die wiederaum aus 3x3 Feldern besteht.<br>" +
 				"Die meisten Felder sind mit Zahlen ausgefüllt, jedoch nicht alle:<br>" +
 				"Ziel ist es, die nicht gefüllten Feldern mit Zahlen zu füllen mit Beachtung folgender Regeln:<br>" +
 				"<ol> <li> 1.Es darf keine Zahl 2 mal in der Reihe und Spalte vorkommen.</li>" +
 				"<li>In den jeweils 9 großen Feldern darf auch keine Zahl 2x vorkommen.</li>" +
-				"<li>Die Zahlen, mit denen man die Felder füllt, müssen zwischen 1-9 betragen.</li></ol></html>", SwingConstants.CENTER);
-		regeln.setBackground(BLUE);
-		regeln.setForeground(WHITE);
-		regeln.setOpaque(true);
-		regeln.setFont(new Font("Arial", Font.PLAIN, 22));
+				"<li>Die Zahlen, mit denen man die Felder füllt, müssen zwischen 1-9 betragen.</li></ol></html>", 22);
 		regeln.setBounds(0, 0, 500, 400);
 		rulePanel.add(regeln);
 		
-		JButton zurueck = new JButton("Zurück");
-		zurueck.setBackground(BLUE);
-		zurueck.setForeground(WHITE);
-		zurueck.setFont(new Font("Arial", Font.PLAIN, 40));
+		MyButton zurueck = new MyButton("Zurück");
 		zurueck.setBounds(0, 400, 500, 100);
-		zurueck.addActionListener(e -> view.showStartScreen());
+		zurueck.addActionListener(e -> {
+			switch (view.getPrevState()){
+				case PAUSE -> view.showPauseScreen();
+				case START -> view.showStartScreen();
+			}
+		});
 		rulePanel.add(zurueck);
 	
 		frame.add(rulePanel);
@@ -197,13 +176,8 @@ public class ViewBuilder {
 		
 		for (int y = 0; y < 9; y++) {
 			for (int x = 0; x < 9; x++) {
-				sudokuFields[x][y] = new JLabel();
-				sudokuFields[x][y].setHorizontalAlignment(SwingConstants.CENTER);
-				defaultJLabelStyling(sudokuFields[x][y]);
+				sudokuFields[x][y] = new SudokuLabel(view);
 				sudokuFields[x][y].addMouseListener(controller);
-//				sudokuFields[x][y].addMouseListener(e -> {
-//					controller.aendereInhaltGraphisch(x, y, 0);
-//				});
 				gamePanel.add(sudokuFields[x][y]);
 			}
 		}
@@ -213,23 +187,22 @@ public class ViewBuilder {
 	}
 	
 	private static void ZwischenRandErstellen(JLabel[][] sudokuFields) {
-		Color farbe = new Color(57, 77, 0);
 		for (int y = 0; y < 9; y++) {
 			for (int x = 0; x < 9; x++) {
-				sudokuFields[x][y].setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, farbe));
+				sudokuFields[x][y].setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, BORDER_COLOR));
 			}
 		}
 		
 		for (int i = 0; i < 9; i++) {
-			sudokuFields[i][2].setBorder(BorderFactory.createMatteBorder(1, 1, 5, 1, farbe));
-			sudokuFields[2][i].setBorder(BorderFactory.createMatteBorder(1, 1, 1, 5, farbe));
-			sudokuFields[i][5].setBorder(BorderFactory.createMatteBorder(1, 1, 5, 1, farbe));
-			sudokuFields[5][i].setBorder(BorderFactory.createMatteBorder(1, 1, 1, 5, farbe));
+			sudokuFields[i][2].setBorder(BorderFactory.createMatteBorder(1, 1, 5, 1, BORDER_COLOR));
+			sudokuFields[2][i].setBorder(BorderFactory.createMatteBorder(1, 1, 1, 5, BORDER_COLOR));
+			sudokuFields[i][5].setBorder(BorderFactory.createMatteBorder(1, 1, 5, 1, BORDER_COLOR));
+			sudokuFields[5][i].setBorder(BorderFactory.createMatteBorder(1, 1, 1, 5, BORDER_COLOR));
 		}
-		sudokuFields[2][2].setBorder(BorderFactory.createMatteBorder(1, 1, 5, 5, farbe));
-		sudokuFields[5][2].setBorder(BorderFactory.createMatteBorder(1, 1, 5, 5, farbe));
-		sudokuFields[2][5].setBorder(BorderFactory.createMatteBorder(1, 1, 5, 5, farbe));
-		sudokuFields[5][5].setBorder(BorderFactory.createMatteBorder(1, 1, 5, 5, farbe));
+		sudokuFields[2][2].setBorder(BorderFactory.createMatteBorder(1, 1, 5, 5, BORDER_COLOR));
+		sudokuFields[5][2].setBorder(BorderFactory.createMatteBorder(1, 1, 5, 5, BORDER_COLOR));
+		sudokuFields[2][5].setBorder(BorderFactory.createMatteBorder(1, 1, 5, 5, BORDER_COLOR));
+		sudokuFields[5][5].setBorder(BorderFactory.createMatteBorder(1, 1, 5, 5, BORDER_COLOR));
 	}
 	
 	public void createExtraPanel(JPanel extraPanel, JPanel chooseNumberPanel, JLabel[][] chooseNumberFields, JLabel helpLabel) {
@@ -237,11 +210,9 @@ public class ViewBuilder {
 		extraPanel.setLayout(new GridLayout(2, 1));
 		
 		chooseNumberPanel.setLayout(new GridLayout(3, 3));
-		for (int y = 0; y < 3; y++) {
-			for (int x = 0; x < 3; x++) {
-				chooseNumberFields[x][y] = new JLabel(String.valueOf(1 + x + (3*y)), SwingConstants.CENTER);
-				defaultJLabelStyling(chooseNumberFields[x][y]);
-				chooseNumberFields[x][y].addMouseListener(controller);
+		for (int y = 0; y < chooseNumberFields.length; y++) {
+			for (int x = 0; x < chooseNumberFields.length; x++) {
+				chooseNumberFields[x][y] = new ChooseNumberLabel(1 + x + (3*y), controller);
 				chooseNumberPanel.add(chooseNumberFields[x][y]);
 			}
 		}
@@ -256,12 +227,5 @@ public class ViewBuilder {
 		extraPanel.add(anweisungsfeld);
 		
 		frame.add(extraPanel);
-	}
-	
-	private static void defaultJLabelStyling(JLabel label){
-		label.setBorder(BorderFactory.createLineBorder(BLACK));
-		label.setBackground(WHITE);
-		label.setFont(new Font("Arial", Font.ITALIC, 20));
-		label.setOpaque(true);
 	}
 }

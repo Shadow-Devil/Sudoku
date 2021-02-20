@@ -1,43 +1,45 @@
-package main;
+package main.view;
 
-import main.Model.Field;
+import main.view.viewbuilder.*;
+import main.controller.Controller;
+import main.model.Field;
 
 import javax.swing.*;
 import java.awt.*;
 
 import static java.awt.Color.*;
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
-import static main.Model.Util.EMPTY;
-import static main.State.*;
+import static main.view.State.*;
 
 public class View {
-	public static final  String TITLE     = "Sudoku";
-	private static final Color  DARK_GREY = new Color(60, 60, 60);
+	public static final String TITLE = "Sudoku";
 	
 	private final JFrame frame = new JFrame(TITLE);
 	
-	private final JPanel     gamePanel    = new JPanel();
-	public final  JLabel[][] sudokuFields = new JLabel[9][9];
+	private final JPanel          gamePanel    = new JPanel();
+	public final  SudokuLabel[][] sudokuFields = new SudokuLabel[9][9];
 	
-	private final JPanel    menuPanel = new JPanel();
-	private final JButton[] buttons   = new JButton[5];
+	private final JPanel     menuPanel = new JPanel();
+	private final MyButton[] buttons   = new MyButton[5];
 	
 	private final JPanel    endPanel   = new JPanel();
-	private final JLabel    winnerText = new JLabel();
-	private final JLabel    timeLabel  = new JLabel();
+	private final MyLabel   winnerText = new MyLabel();
+	private final MyLabel   timeLabel  = new MyLabel();
 	private final TextField textField  = new TextField(30);
 	
-	private final JPanel     chooseNumberPanel  = new JPanel();
-	public final  JLabel[][] chooseNumberFields = new JLabel[3][3];
-	private final JLabel     helpLabel          = new JLabel();
+	private final JPanel                chooseNumberPanel  = new JPanel();
+	public final  ChooseNumberLabel[][] chooseNumberFields = new ChooseNumberLabel[3][3];
+	private final JLabel               helpLabel          = new JLabel();
 	
-	private final JPanel   highscorePanel = new JPanel();
-	private final JLabel[] highscores     = new JLabel[10];
+	private final JPanel    highscorePanel = new JPanel();
+	private final MyLabel[] highscores     = new MyLabel[10];
 	
 	private final JPanel rulePanel = new JPanel();
 	
-	private String  username = "Lieber User";
+	private final String username = "Lieber User";
+	
 	private State   state;
+	private State   prevState = START;
 	private boolean help;
 	
 	
@@ -59,28 +61,16 @@ public class View {
 	}
 	
 	public void start(Field[][] board) {
-		for (int x = 0; x < 9; x++) {
-			for (int y = 0; y < 9; y++) {
-				aendereInhalt(x, y, board[x][y].getInhalt());
-				if (board[x][y].isConstant()) {
-					sudokuFields[x][y].setForeground(WHITE);
-					sudokuFields[x][y].setBackground(DARK_GREY);
-				} else {
-					sudokuFields[x][y].setForeground(BLACK);
-					sudokuFields[x][y].setBackground(WHITE);
-				}
-			}
-		}
+		for (int x = 0; x < 9; x++)
+			for (int y = 0; y < 9; y++)
+				sudokuFields[x][y].setField(board[x][y]);
+		
 		changeState(gamePanel, GAME);
 	}
 	
-	public void showChooseNumberPanel(boolean show) {
-		chooseNumberPanel.setVisible(show);
+	public void showChooseNumberPanel() {
+		chooseNumberPanel.setVisible(true);
 		frame.repaint();
-	}
-	
-	public void aendereInhalt(int x, int y, int i) {
-		sudokuFields[x][y].setText(i == EMPTY ? "" : "" + i);
 	}
 	
 	public void toggleHelp() {
@@ -99,21 +89,8 @@ public class View {
 		}
 	}
 	
-	public void markiereLabel(int x, int y, boolean currentMouse, boolean selected) {
-		if (selected) {
-			sudokuFields[x][y].setBackground(GRAY);
-		} else {
-			if (currentMouse) {
-				sudokuFields[x][y].setBackground(LIGHT_GRAY);
-			} else {
-				sudokuFields[x][y].setBackground(WHITE);
-			}
-		}
-		frame.repaint();
-	}
-	
-	
-	public void writeHelpLabel(String text) { //Anweisungstext ändern
+	//Anweisungstext ändern
+	public void writeHelpLabel(String text) {
 		text = String.format("<html>%s<br><p>%s</p></html>", username, text);
 		helpLabel.setText(text);
 		frame.repaint();
@@ -167,14 +144,6 @@ public class View {
 		changeState(highscorePanel, HIGHSCORE);
 	}
 	
-
-	
-	public void highscoreReset() {
-		for (int i = 0; i < 10; i++)
-			highscores[i].setText(String.format("%d. ---", i + 1));
-		showStartScreen();
-	}
-	
 	public void showRuleScreen() {
 		changeState(rulePanel, RULE);
 	}
@@ -193,14 +162,6 @@ public class View {
 		changeState(gamePanel, GAME);
 	}
 	
-	public void reset(Field[][] board) {
-		for (int y = 0; y < 9; y++)
-			for (int x = 0; x < 9; x++)
-				if (!board[x][y].isConstant())
-					aendereInhalt(x, y, 0);
-		frame.repaint();
-	}
-	
 	private void changeState(JPanel panel, State state) {
 		gamePanel.setVisible(false);
 		menuPanel.setVisible(false);
@@ -209,6 +170,7 @@ public class View {
 		highscorePanel.setVisible(false);
 		chooseNumberPanel.setVisible(false);
 		
+		prevState = this.state;
 		this.state = state;
 		panel.setVisible(true);
 		frame.repaint();
@@ -216,6 +178,36 @@ public class View {
 	
 	public State getState() {
 		return state;
+	}
+	
+	public State getPrevState() {
+		return prevState;
+	}
+	
+	public void blink(int x, int y) {
+		new Thread(() -> {
+			sudokuFields[x][y].setForeground(Color.RED);
+			try {
+				Thread.sleep(100);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			sudokuFields[x][y].setForeground(Color.BLACK);
+		}).start();
+	}
+	
+	public void reset() {
+		for (int x = 0; x < 9; x++)
+			for (int y = 0; y < 9; y++)
+				sudokuFields[x][y].updateField();
+		showGameScreen();
+	}
+	
+	public void choseNumber(int number) {
+		SudokuLabel.selected.updateField(number);
+		SudokuLabel.selected = null;
+		chooseNumberPanel.setVisible(false);
+		frame.repaint();
 	}
 }
 

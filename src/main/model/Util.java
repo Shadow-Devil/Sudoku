@@ -1,4 +1,4 @@
-package main.Model;
+package main.model;
 
 import java.util.Random;
 import java.util.function.Predicate;
@@ -49,7 +49,7 @@ public class Util {
 			while (uniqueSolution(board) == 1) {
 				x = random.nextInt(9);
 				y = random.nextInt(9);
-				tmp = board[x][y].getInhalt();
+				tmp = board[x][y].getContent();
 				if (tmp != EMPTY) {
 					board[x][y].setInhalt(EMPTY);
 					deleted++;
@@ -60,8 +60,8 @@ public class Util {
 		
 		for (int x = 0; x < board.length; x++) {
 			for (int y = 0; y < board[0].length; y++) {
-				if (board[x][y].getInhalt() != 0)
-					board[x][y] = new FinalField(board[x][y].getInhalt());
+				if (board[x][y].getContent() != 0)
+					board[x][y] = new FinalField(board[x][y].getContent());
 			}
 		}
 		
@@ -72,7 +72,7 @@ public class Util {
 	 * Prüft eine Zahl nach Regelverstoß
 	 */
 	public static boolean pruefeSpielzahl(Field[][] board, int x, int y) {
-		int current = board[x][y].getInhalt();
+		int current = board[x][y].getContent();
 		
 		//testen, ob Feld beschrieben
 		if (current == EMPTY)
@@ -82,11 +82,11 @@ public class Util {
 		for (int i = 0; i < 9; i++){
 			
 			//Zeilenabfrage
-			if (current == board[i][y].getInhalt() && x != i)
+			if (current == board[i][y].getContent() && x != i)
 				return false;
 			
 			//Spaltenabfrage
-			if (current == board[x][i].getInhalt() && y != i)
+			if (current == board[x][i].getContent() && y != i)
 				return false;
 			
 		}
@@ -97,7 +97,7 @@ public class Util {
 		while (ytmp < i)// im 3x3 Quadrat Regelverstoß
 		{
 			while (xtmp < j) {
-				if (current == board[xtmp][ytmp].getInhalt() && x != xtmp && y != ytmp)
+				if (current == board[xtmp][ytmp].getContent() && x != xtmp && y != ytmp)
 					return false;
 				
 				xtmp++;
@@ -118,7 +118,7 @@ public class Util {
 	private static int solve(int x, int y, Field[][] tmpfeld) {
 		int counter = 0;
 		
-		if (tmpfeld[x][y].getInhalt() == EMPTY) {
+		if (tmpfeld[x][y].getContent() == EMPTY) {
 			for (int i = 1; i <= 9; i++) {
 				tmpfeld[x][y].setInhalt(i);
 				if (pruefeSpielzahl(tmpfeld, x, y)) {
@@ -160,7 +160,7 @@ public class Util {
 	
 	
 	public static boolean isFull(Field[][] board) {
-		return andBoard(board, field -> field.getInhalt() != EMPTY);
+		return andBoard(board, field -> field.getContent() != EMPTY);
 	}
 	
 	public static Field[][] setEmpty(Field[][] board) {
@@ -176,7 +176,7 @@ public class Util {
 		Field[][] to = new Field[from.length][from.length];
 		for (int x = 0; x < from.length; x++) {
 			for (int y = 0; y < from[0].length; y++) {
-				to[x][y] = new Field(from[x][y].getInhalt());
+				to[x][y] = new Field(from[x][y].getContent());
 			}
 		}
 		return to;
@@ -186,7 +186,7 @@ public class Util {
 	{
 		for (int i = 0; i < 9; i++) {
 			for (int j = 0; j < 9; j++) {
-				System.out.print(f[j][i].getInhalt() + " ");
+				System.out.print(f[j][i].getContent() + " ");
 			}
 			System.out.println();
 		}
