@@ -62,13 +62,10 @@ public class Model {
 	}
 	
 
-	
 	private void consumeBoard(TriConsumer<Integer, Integer, Field> c) {
-		for (int y = 0; y < 9; y++) {
-			for (int x = 0; x < 9; x++) {
+		for (int y = 0; y < 9; y++)
+			for (int x = 0; x < 9; x++)
 				c.consume(x, y, gameBoard[x][y]);
-			}
-		}
 	}
 	
 	private <T> T loopBoard(TriFunction<Integer, Integer, Field, T> f) {
@@ -86,9 +83,7 @@ public class Model {
 	}
 	
 	public void reset() {
-		for (Field[] column : gameBoard)
-			for (Field field : column)
-				field.reset();
+		consumeBoard((x, y, field) -> field.reset());
 	}
 	
 	public void setField(int x, int y, int zahl) {

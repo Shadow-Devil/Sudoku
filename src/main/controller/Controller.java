@@ -4,9 +4,7 @@ import main.model.Difficulty;
 import main.model.Model;
 import main.view.View;
 
-import java.awt.event.*;
-
-public class Controller extends MouseAdapter {
+public class Controller {
 	private final SQL   sql;
 	private final Model model;
 	private final View  view;
@@ -92,7 +90,7 @@ public class Controller extends MouseAdapter {
 		
 		if (model.isFinished()) {
 			stopTimer();
-			view.showEndScreen(timer / 1000);
+			view.showEndScreen(timer);
 			return;
 		}
 		
@@ -100,7 +98,7 @@ public class Controller extends MouseAdapter {
 		for (int y = 0; y < 9; y++)
 			for (int x = 0; x < 9; x++)
 				if (!model.pruefeSpielzahl(x, y) && !model.isFieldConstant(x, y))
-					view.blink(x, y);
+					view.highlightBad(x, y);
 	}
 	
 	public void highscore() {
@@ -108,11 +106,16 @@ public class Controller extends MouseAdapter {
 	}
 	
 	public void highscoreinsert() {
-		if(view.getUsername().equals("")){
+		if(view.getNameInput().equals("")){
 			view.writeHelpLabel("Bitte gebe einen Namen ein");
 			return;
 		}
-		sql.insertHighscore(view.getUsername(), timer);
+		view.setUsername(view.getNameInput());
+		sql.insertHighscore(view.getNameInput(), timer);
 		view.showStartScreen();
+	}
+	
+	public long getTimer() {
+		return timer;
 	}
 }

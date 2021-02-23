@@ -1,4 +1,6 @@
-package main.view.viewbuilder;
+package main.view.components;
+
+import main.view.viewbuilder.ViewBuilder;
 
 import javax.swing.*;
 import java.awt.*;

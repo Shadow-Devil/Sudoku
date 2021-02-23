@@ -1,5 +1,9 @@
 package main.view;
 
+import main.view.components.ChooseNumberLabel;
+import main.view.components.MyButton;
+import main.view.components.MyLabel;
+import main.view.components.SudokuLabel;
 import main.view.viewbuilder.*;
 import main.controller.Controller;
 import main.model.Field;
@@ -7,7 +11,6 @@ import main.model.Field;
 import javax.swing.*;
 import java.awt.*;
 
-import static java.awt.Color.*;
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 import static main.view.State.*;
 
@@ -29,14 +32,14 @@ public class View {
 	
 	private final JPanel                chooseNumberPanel  = new JPanel();
 	public final  ChooseNumberLabel[][] chooseNumberFields = new ChooseNumberLabel[3][3];
-	private final JLabel               helpLabel          = new JLabel();
+	private final JLabel                helpLabel          = new JLabel();
 	
 	private final JPanel    highscorePanel = new JPanel();
 	private final MyLabel[] highscores     = new MyLabel[10];
 	
 	private final JPanel rulePanel = new JPanel();
 	
-	private final String username = "Lieber User";
+	private String username = "Player";
 	
 	private State   state;
 	private State   prevState = START;
@@ -77,21 +80,19 @@ public class View {
 		help = !help;
 	}
 	
-	public void highlighteZahlen(int x, int y, boolean b) {
-		if (b && help) {
-			sudokuFields[x][y].setBackground(GREEN);
-		} else {
-			for (int yt = 0; yt < 9; yt++) {
-				for (int xt = 0; xt < 9; xt++) {
-					sudokuFields[xt][yt].setFont(new Font("Arial", Font.ITALIC, 20));
-				}
-			}
-		}
+	public void highlighteZahlen(int number) {
+		update();
+		if(!help || number == 0)
+			return;
+		
+		for (int x = 0; x < 9; x++)
+			for (int y = 0; y < 9; y++)
+				sudokuFields[x][y].highlight(number);
 	}
 	
 	//Anweisungstext ändern
 	public void writeHelpLabel(String text) {
-		text = String.format("<html>%s<br><p>%s</p></html>", username, text);
+		text = String.format("<html>%s %s<br><p>%s</p></html>", "Liebe/er", username, text);
 		helpLabel.setText(text);
 		frame.repaint();
 	}
@@ -126,7 +127,7 @@ public class View {
 		winnerText.setText("<html><p>" + username + ": Herzlichen Glückwunsch! <br>" +
 				"Sie haben gewonnen! <br> " +
 				"</html>");//Gebe deinen Namen unten ein um dich in die Highscore Liste einzutragen</p>
-		timeLabel.setText("Benötigte Zeit: " + time);
+		timeLabel.setText("Benötigte Zeit: " + (time/1000));
 		
 		textField.setText("");
 		writeHelpLabel("Das Spiel ist zuende");
@@ -134,7 +135,7 @@ public class View {
 		changeState(endPanel, END);
 	}
 	
-	public String getUsername() {
+	public String getNameInput() {
 		return textField.getText();
 	}
 	
@@ -184,30 +185,31 @@ public class View {
 		return prevState;
 	}
 	
-	public void blink(int x, int y) {
-		new Thread(() -> {
-			sudokuFields[x][y].setForeground(Color.RED);
-			try {
-				Thread.sleep(100);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			sudokuFields[x][y].setForeground(Color.BLACK);
-		}).start();
+	public void highlightBad(int x, int y) {
+		sudokuFields[x][y].blink();
 	}
 	
 	public void reset() {
-		for (int x = 0; x < 9; x++)
-			for (int y = 0; y < 9; y++)
-				sudokuFields[x][y].updateField();
+		update();
 		showGameScreen();
 	}
 	
 	public void choseNumber(int number) {
 		SudokuLabel.selected.updateField(number);
-		SudokuLabel.selected = null;
+
 		chooseNumberPanel.setVisible(false);
+		update();
 		frame.repaint();
+	}
+	
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	
+	public void update(){
+		for (SudokuLabel[] column : sudokuFields)
+			for (SudokuLabel label: column)
+				label.updateField();
 	}
 }
 

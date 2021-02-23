@@ -1,4 +1,4 @@
-package main.view.viewbuilder;
+package main.view.components;
 
 import main.controller.Controller;
 import main.view.View;

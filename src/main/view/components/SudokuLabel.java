@@ -1,4 +1,4 @@
-package main.view.viewbuilder;
+package main.view.components;
 
 import main.model.Field;
 import main.view.View;
@@ -16,6 +16,8 @@ public class SudokuLabel extends MyLabel {
 	public static SudokuLabel selected = null;
 	
 	private Field field;
+	private boolean highlighted;
+	
 	
 	public SudokuLabel(View view) {
 		super();
@@ -28,6 +30,8 @@ public class SudokuLabel extends MyLabel {
 		addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				view.highlighteZahlen(field.getContent());
+				
 				if(field.isConstant()){
 					view.writeHelpLabel("Nicht änderbar! Wählen sie ein anderes Feld aus");
 					return;
@@ -43,14 +47,14 @@ public class SudokuLabel extends MyLabel {
 			
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				if(field.isConstant() || SudokuLabel.this == selected)
+				if(field.isConstant() || SudokuLabel.this == selected || highlighted)
 					return;
 				setBackground(LIGHT_GRAY);
 			}
 			
 			@Override
 			public void mouseExited(MouseEvent e) {
-				if(field.isConstant() || SudokuLabel.this == selected)
+				if(field.isConstant() || SudokuLabel.this == selected || highlighted)
 					return;
 				setBackground(WHITE);
 			}
@@ -58,28 +62,56 @@ public class SudokuLabel extends MyLabel {
 	}
 	
 	private void unselect() {
-		setBackground(WHITE);
+		if(!highlighted)
+			setBackground(WHITE);
 	}
 	
 	public void setField(Field field) {
 		this.field = field;
 		updateField();
-		
-		if (field.isConstant()) {
-			setForeground(WHITE);
-			setBackground(DARK_GREY);
-		}
 	}
 	
 	public void updateField() {
+		setForeground(field.isConstant() ? WHITE : BLACK);
+		setBackground(field.isConstant() ? DARK_GREY:WHITE);
+		highlighted = false;
+		
 		int content = field.getContent();
 		setText(content == EMPTY ? "" : "" + content);
-		setBackground(WHITE);
-		setForeground(BLACK);
 	}
 	
 	public void updateField(int number) {
 		field.setInhalt(number);
 		updateField();
+		selected = null;
+	}
+	
+	public void highlight(int number){
+		if(field.getContent() == number && field.isConstant()){
+			highlighted = true;
+			setForeground(BLACK);
+			setBackground(GREEN);
+		}else if(field.getContent() == number){
+			highlighted = true;
+			setBackground(YELLOW);
+		}
+	}
+	
+	public void blink() {
+		if(field.isConstant())
+			return;
+		
+		new Thread(() -> {
+			for (int i = 0; i < 5; i++) {
+				try {
+					setBackground(RED);
+					Thread.sleep(500);
+					setBackground(WHITE);
+					Thread.sleep(500);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}).start();
 	}
 }

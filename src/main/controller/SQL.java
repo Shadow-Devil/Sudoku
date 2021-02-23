@@ -113,7 +113,7 @@ public class SQL {
 			 Statement stmt = conn.createStatement();
 			 ResultSet rs = stmt.executeQuery("SELECT name, time FROM high ORDER BY time LIMIT 10")) {
 			for (int i = 0; rs.next(); i++) {
-				s[i] = rs.getString("name") + " Time:" + rs.getInt("time");
+				s[i] = rs.getString("name") + " Time:" + (rs.getLong("time") / 1000);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();

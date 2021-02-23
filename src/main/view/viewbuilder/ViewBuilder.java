@@ -1,7 +1,11 @@
 package main.view.viewbuilder;
 
 import main.controller.Controller;
-import main.view.View;
+import main.view.*;
+import main.view.components.ChooseNumberLabel;
+import main.view.components.MyButton;
+import main.view.components.MyLabel;
+import main.view.components.SudokuLabel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,20 +15,10 @@ import static java.awt.Color.*;
 import static java.awt.Color.WHITE;
 import static main.model.Difficulty.*;
 
-public class ViewBuilder {
-	public static final Color FCOLOR = WHITE;
-	public static final Color BCOLOR = BLUE;
-	private static final Color BORDER_COLOR  = new Color(57, 77, 0);
-	
-	private final View       view;
-	private final Controller controller;
-	private final JFrame     frame;
-	
-	public ViewBuilder(View view, Controller controller, JFrame frame){
-		this.view = view;
-		this.controller = controller;
-		this.frame = frame;
-	}
+public record ViewBuilder(View view, Controller controller, JFrame frame) {
+	public static final  Color FCOLOR       = WHITE;
+	public static final  Color BCOLOR       = BLUE;
+	private static final Color BORDER_COLOR = new Color(57, 77, 0);
 	
 	/**
 	 * Inizialises the 5 Buttons
@@ -35,7 +29,7 @@ public class ViewBuilder {
 		
 		buttons[0] = new MyButton();
 		buttons[0].addActionListener(e -> {
-			switch (view.getState()){
+			switch (view.getState()) {
 				case START -> view.showSelectDifficultyScreen();
 				case SELECTDIFF -> controller.start(EASY);
 				case PAUSE -> {
@@ -47,7 +41,7 @@ public class ViewBuilder {
 		
 		buttons[1] = new MyButton();
 		buttons[1].addActionListener(e -> {
-			switch (view.getState()){
+			switch (view.getState()) {
 				case START -> controller.load();
 				case SELECTDIFF -> controller.start(MEDIUM);
 				case PAUSE -> controller.save();
@@ -56,7 +50,7 @@ public class ViewBuilder {
 		
 		buttons[2] = new MyButton();
 		buttons[2].addActionListener(e -> {
-			switch (view.getState()){
+			switch (view.getState()) {
 				case START, PAUSE -> view.showRuleScreen();
 				case SELECTDIFF -> controller.start(HARD);
 			}
@@ -64,7 +58,7 @@ public class ViewBuilder {
 		
 		buttons[3] = new MyButton();
 		buttons[3].addActionListener(e -> {
-			switch (view.getState()){
+			switch (view.getState()) {
 				case START -> controller.highscore();
 				case SELECTDIFF -> controller.start(EXTREME);
 				case PAUSE -> controller.reset();
@@ -73,7 +67,7 @@ public class ViewBuilder {
 		
 		buttons[4] = new MyButton();
 		buttons[4].addActionListener(e -> {
-			switch (view.getState()){
+			switch (view.getState()) {
 				case START -> System.exit(0);
 				case SELECTDIFF, PAUSE -> view.showStartScreen();
 			}
@@ -88,9 +82,9 @@ public class ViewBuilder {
 	public void createEndMenu(JPanel endPanel, MyLabel winnerText, MyLabel timeLabel, TextField textField) {
 		endPanel.setLayout(new GridLayout(5, 1));
 		endPanel.setBounds(0, 0, 500, 500);
-
+		
 		endPanel.add(winnerText);
-
+		
 		endPanel.add(timeLabel);
 		
 		JButton addHighscore = new MyButton("Highscore eintragen", 25);
@@ -144,13 +138,13 @@ public class ViewBuilder {
 		MyButton zurueck = new MyButton("Zurück");
 		zurueck.setBounds(0, 400, 500, 100);
 		zurueck.addActionListener(e -> {
-			switch (view.getPrevState()){
+			switch (view.getPrevState()) {
 				case PAUSE -> view.showPauseScreen();
 				case START -> view.showStartScreen();
 			}
 		});
 		rulePanel.add(zurueck);
-	
+		
 		frame.add(rulePanel);
 	}
 	
@@ -167,17 +161,19 @@ public class ViewBuilder {
 		
 		gamePanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
 				.put(KeyStroke.getKeyStroke(KeyEvent.VK_U, 0), "END");
-		gamePanel.getActionMap().put("END", new FunctionalAction(e -> view.showEndScreen(1000)));
+		gamePanel.getActionMap().put("END", new FunctionalAction(e -> {
+			controller.stopTimer();
+			view.showEndScreen(controller.getTimer());
+		}));
 		
 		gamePanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
 				.put(KeyStroke.getKeyStroke(KeyEvent.VK_H, 0), "HELP");
 		gamePanel.getActionMap().put("HELP", new FunctionalAction(e -> view.toggleHelp()));
-
+		
 		
 		for (int y = 0; y < 9; y++) {
 			for (int x = 0; x < 9; x++) {
 				sudokuFields[x][y] = new SudokuLabel(view);
-				sudokuFields[x][y].addMouseListener(controller);
 				gamePanel.add(sudokuFields[x][y]);
 			}
 		}
@@ -187,11 +183,9 @@ public class ViewBuilder {
 	}
 	
 	private static void ZwischenRandErstellen(JLabel[][] sudokuFields) {
-		for (int y = 0; y < 9; y++) {
-			for (int x = 0; x < 9; x++) {
+		for (int y = 0; y < 9; y++)
+			for (int x = 0; x < 9; x++)
 				sudokuFields[x][y].setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, BORDER_COLOR));
-			}
-		}
 		
 		for (int i = 0; i < 9; i++) {
 			sudokuFields[i][2].setBorder(BorderFactory.createMatteBorder(1, 1, 5, 1, BORDER_COLOR));
@@ -212,7 +206,7 @@ public class ViewBuilder {
 		chooseNumberPanel.setLayout(new GridLayout(3, 3));
 		for (int y = 0; y < chooseNumberFields.length; y++) {
 			for (int x = 0; x < chooseNumberFields.length; x++) {
-				chooseNumberFields[x][y] = new ChooseNumberLabel(1 + x + (3*y), controller);
+				chooseNumberFields[x][y] = new ChooseNumberLabel(1 + x + (3 * y), controller);
 				chooseNumberPanel.add(chooseNumberFields[x][y]);
 			}
 		}
