@@ -5,46 +5,17 @@ import java.util.function.Predicate;
 
 public class Util {
 	private static final Random random = new Random();
-	public static final int EMPTY = 0;
-	
-	/**
-	 * Zufälliges Füllen mit Abfrage nach Regelverstoß
-	 */
-	private static Field[][] produceFullBoard() {
-		Field[][] result = setEmpty(new Field[9][9]);
-		
-		while (!isFull(result)) {
-			f:
-			for (int x = 0; x < 9; x++) {
-				for (int y = 0; y < 9; y++) {
-					int r = 1 + random.nextInt(9);
-					int runner = r;
-					result[x][y].setInhalt(r);
-					while (!pruefeSpielzahl(result, x, y)) {
-						runner = (runner % 9) + 1;
-						result[x][y].setInhalt(runner);
-						
-						if (r == runner) //Spielfeld kann nicht gefüllt werden
-						{
-							result = setEmpty(result);
-							break f;
-						}
-					}
-				}
-			}
-		}
-		return result;
-	}
+	public static final  int    EMPTY  = 0;
 	
 	public static Field[][] produceGameBoard(Difficulty diff) {
 		Field[][] fullBoard = Util.produceFullBoard();
-		int deleted;
+		int       deleted;
 		Field[][] board;
 		do {
 			board = copy(fullBoard);
 			deleted = 0;
-			int x = 0;
-			int y = 0;
+			int x   = 0;
+			int y   = 0;
 			int tmp = 0;
 			while (uniqueSolution(board) == 1) {
 				x = random.nextInt(9);
@@ -69,6 +40,35 @@ public class Util {
 	}
 	
 	/**
+	 * Zufälliges Füllen mit Abfrage nach Regelverstoß
+	 */
+	private static Field[][] produceFullBoard() {
+		Field[][] result = setEmpty(new Field[9][9]);
+		
+		while (!isFull(result)) {
+			f:
+			for (int x = 0; x < 9; x++) {
+				for (int y = 0; y < 9; y++) {
+					int r      = 1 + random.nextInt(9);
+					int runner = r;
+					result[x][y].setInhalt(r);
+					while (!pruefeSpielzahl(result, x, y)) {
+						runner = (runner % 9) + 1;
+						result[x][y].setInhalt(runner);
+						
+						if (r == runner) //Spielfeld kann nicht gefüllt werden
+						{
+							result = setEmpty(result);
+							break f;
+						}
+					}
+				}
+			}
+		}
+		return result;
+	}
+	
+	/**
 	 * Prüft eine Zahl nach Regelverstoß
 	 */
 	public static boolean pruefeSpielzahl(Field[][] board, int x, int y) {
@@ -79,7 +79,7 @@ public class Util {
 			return false;
 		
 		//Zeilen und Spalten prüfen
-		for (int i = 0; i < 9; i++){
+		for (int i = 0; i < 9; i++) {
 			
 			//Zeilenabfrage
 			if (current == board[i][y].getContent() && x != i)
@@ -92,8 +92,8 @@ public class Util {
 		}
 		int xtmp = x / 3 * 3; // Welches 3x3
 		int ytmp = y / 3 * 3;
-		int j = xtmp + 3;
-		int i = ytmp + 3;
+		int j    = xtmp + 3;
+		int i    = ytmp + 3;
 		while (ytmp < i)// im 3x3 Quadrat Regelverstoß
 		{
 			while (xtmp < j) {
@@ -172,13 +172,18 @@ public class Util {
 		return board;
 	}
 	
+	/**
+	 * Creates A new Sudoku with every Field copied.
+	 *
+	 * @param from the old Sudoku where to copy from
+	 * @return the new Sudoku
+	 */
 	public static Field[][] copy(Field[][] from) {
 		Field[][] to = new Field[from.length][from.length];
-		for (int x = 0; x < from.length; x++) {
-			for (int y = 0; y < from[0].length; y++) {
+		for (int x = 0; x < from.length; x++)
+			for (int y = 0; y < from[0].length; y++)
 				to[x][y] = new Field(from[x][y].getContent());
-			}
-		}
+		
 		return to;
 	}
 	

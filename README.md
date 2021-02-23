@@ -1,6 +1,8 @@
-PROJECT TITLE: Sudoku
-PURPOSE OF PROJECT:
-VERSION or DATE:0.2
-HOW TO START THIS PROJECT:new main.Controller.Controller()
-AUTHORS:Felix Schnabel, Arcangelo Capozzolo, Sailes Rijal
-USER INSTRUCTIONS:
+# Sudoku
+
+This was a School project of 
+- Felix Schnabel
+- Arcangelo Capozzolo
+- Sailes Rijal  
+
+It's now beeing continued by me.
