@@ -1,0 +1,11 @@
+- Add keyboard input
+- make responsive?
+- add solver
+- add an easy mode (with instant checking)
+- themes?
+- themes into the Database
+- Bug: clicking not working
+- Better visuals
+- Animations?
+- notes
+- different sizes? 4x4 16x16
